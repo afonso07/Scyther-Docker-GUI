@@ -1,0 +1,39 @@
+/* 
+ * Athena breaker protocol
+ */
+
+// PKI infrastructure
+
+const pk: Function;
+secret sk: Function;
+inversekeys (pk,sk);
+
+// The protocol description
+
+protocol abreaker(I,R)
+{
+	role I
+	{
+		fresh ni: Nonce;
+
+		send_!1(I,R, {{I,ni}pk(R)}pk(R) );
+
+		claim_i1(I,Secret,ni);
+	}	
+	
+	role R
+	{
+		var T:Ticket;
+
+		recv_!1(I,R, {T}pk(R) );
+		send_!2(R,I, T );
+
+	}
+}
+
+// The agents in the system
+
+
+// An untrusted agent, with leaked information
+
+

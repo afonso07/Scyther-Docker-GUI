@@ -1,0 +1,154 @@
+/*
+ * Scyther description of Kerberos as in RDDM'07
+ *
+ */
+
+usertype Sessionkey;
+usertype Text;
+secret ktk: Function;
+secret kck: Function;
+secret kst: Function;
+
+protocol @swapkey-ktk(I,R)
+{
+    # Protocol added to work around the symmetry problems where k(I,R) != k(R,I)
+    role I
+    {
+        var T:Ticket;
+
+
+        recv_!X1(R,I,{T}ktk(I,R));
+        send_!X2(I,R,{T}ktk(R,I));
+    }
+    role R
+    {
+    }
+}
+protocol @swapkey-kck(I,R)
+{
+    # Protocol added to work around the symmetry problems where k(I,R) != k(R,I)
+    role I
+    {
+        var T:Ticket;
+
+
+        recv_!X1(R,I,{T}kck(I,R));
+        send_!X2(I,R,{T}kck(R,I));
+    }
+    role R
+    {
+    }
+}
+protocol @swapkey-kst(I,R)
+{
+    # Protocol added to work around the symmetry problems where k(I,R) != k(R,I)
+    role I
+    {
+        var T:Ticket;
+
+
+        recv_!X1(R,I,{T}kst(I,R));
+        send_!X2(I,R,{T}kst(R,I));
+    }
+    role R
+    {
+    }
+}
+
+protocol kerberos(C,K,T,S) {
+
+	role C {
+		fresh n1: Nonce;
+		fresh n2: Nonce;
+		var tgt: Ticket;
+		var st: Ticket;
+		var AKey: Sessionkey;
+		var SKey: Sessionkey;
+		fresh t: Text;
+
+		send_1(C,K, C,T,n1);
+		recv_2(K,C, tgt, { AKey,n1,T }kck(C,K) );
+
+		// Stage boundary
+		
+		send_3(C,T, tgt, { C }AKey,C,S,n2 );
+		recv_4(T,C, C, st, { SKey, n2, S }AKey );
+		
+		// Stage boundary
+		
+		send_5(C,S, st, { C,t }SKey );
+		recv_6(S,C, { t }SKey );
+
+		// Theorem 5 (a)
+                // If C,K are honest
+                claim(C,Reachable);
+		// Theorem 6 (a)
+		// If C,K,T are all honest
+		claim(C,Secret,AKey);
+		// Theorem 7 (a)
+		// If C,K,S are all honest
+		claim(C, Reachable);
+		// Theorem 8
+		// If C,K,S are all honest
+                claim(C, Secret, SKey);
+	}
+	role K {
+		var n1: Nonce;
+		fresh AKey: Sessionkey;
+
+		recv_1(C,K, C,T,n1);
+		send_2(K,C, { AKey, C }ktk(T,K), { AKey,n1,T }kck(C,K) );
+		// Theorem 6 (a)
+		// If C,K,T are all honest
+		claim_K1(K,Secret,AKey);
+	}
+
+	role T {
+		var AKey: Sessionkey;
+		var n2: Nonce;
+		fresh SKey: Sessionkey;
+
+		recv_3(C,T, { AKey, C }ktk(T,K), { C }AKey,C,S,n2 );
+		send_4(T,C, C,{ SKey, C }kst(S,T), { SKey, n2, S }AKey );
+
+		// Theorem 5 (a)
+                // If C,K are honest
+                claim(T,Reachable);
+		// Theorem 6 (a)
+		// If C,K,T are all honest
+		claim(T,Secret,AKey);
+
+		// My own
+		claim(T,Secret,SKey);
+	}
+	role S {
+		var t: Text;
+		var SKey: Sessionkey;
+
+		recv_5(C,S, { SKey, C }kst(S,T), { C,t }SKey );
+		send_6(S,C, { t }SKey );
+		// Theorem 7 (b)
+		// If C,K,S,T are honest
+		claim(S, Reachable);
+
+		// My own
+		claim(S, Secret, t);
+		claim(S, Secret, SKey);
+	}
+}
+
+const Alice,Bob,Charlie,Eve: Agent;
+
+// C untrusted
+
+// K untrusted
+
+// T untrusted
+
+// S untrusted
+
+
+
+
+		
+

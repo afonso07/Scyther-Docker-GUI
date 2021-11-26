@@ -1,0 +1,32 @@
+usertype SesKey, Server;
+
+/* Version from the Brutus reports
+*/
+
+protocol wmfbrutus(A,B,S)
+{
+	role A
+	{
+		fresh kab : SesKey;
+
+		send_1(A,S, A, { B,kab }k(A,S) );
+	}
+
+	role B
+	{
+		var kab : SesKey;
+
+		recv_2(S,B, { A, kab }k(B,S) );
+
+		claim_3(B, Secret,kab);
+	}
+
+	role S
+	{
+		var kab : SesKey;
+
+		recv_1(A,S, A, { B,kab }k(A,S) );
+		send_2(S,B, { A, kab }k(B,S) );
+	}
+}
+

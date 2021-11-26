@@ -1,0 +1,51 @@
+usertype Sessionkey;
+usertype Ticket;
+secret k: Function;
+
+protocol kaochow2(I,R,S)
+{
+	role I
+	{
+		fresh ni: Nonce;
+		var nr: Nonce;
+		var kir,kt: Sessionkey;
+
+		send_1 (I,S, I,R,ni);
+		recv_3 (R,I, R, {I,R,ni,kir,kt}k(I,S), {ni, kir}kt, nr );
+		send_4 (I,R, {nr,kir}kt );
+
+		claim_5 (I, Nisynch);
+		claim_6 (I, Niagree);
+		claim_7 (I, Secret, kir);
+	}	
+	
+	role R
+	{
+		var ni: Nonce;
+		fresh nr: Nonce;
+		var kir,kt: Sessionkey;
+		var T: Ticket;
+
+		recv_2 (S,R, T, { I,R,ni,kir,kt }k(R,S)  ); 
+		send_3 (R,I, R, T, {ni, kir}kt, nr );
+		recv_4 (I,R, {nr,kir}kt );
+
+		claim_8 (R, Nisynch);
+		claim_9 (R, Niagree);
+		claim_10 (R, Secret, kir);
+	}
+
+	role S
+	{
+		var ni: Nonce;
+		fresh kir, kt: Sessionkey;
+
+		recv_1 (I,S, I,R,ni);
+		send_2 (S,R, {I,R,ni,kir,kt}k(I,S), { I,R,ni,kir,kt }k(R,S)  ); 
+	}
+}
+
+
+const te: Ticket;
+const ke: Sessionkey;
+

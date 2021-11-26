@@ -1,0 +1,51 @@
+/* 
+	Bilateral Key Exchange with Public Key protocol (bkeCE)
+
+	Version from Corin/Etalle: An Improved Constraint-Based System for the Verification of Security Protocols.
+	Tried to stay as close as possible to compare timing results.
+*/
+
+usertype Key;
+
+const pk,hash: Function;
+secret sk,unhash: Function;
+
+inversekeys (pk,sk);
+inversekeys (hash,unhash);
+
+protocol bkeCE(A,B)
+{
+	role A
+	{
+		var nb: Nonce;
+		fresh na: Nonce;
+		fresh kab: Key;
+
+		recv_1 (B,A, B,{ nb,B }pk(A) );
+		send_2 (A,B, { hash(nb),na,A,kab }pk(B) );
+		recv_3 (B,A, { hash(na) }kab );
+
+		claim_A1 (A, Secret, na);
+		claim_A2 (A, Secret, nb);
+	}
+
+	role B
+	{
+		fresh nb: Nonce;
+		var na: Nonce;
+		var kab: Key;
+
+		send_1 (B,A, B,{ nb,B }pk(A) );
+		recv_2 (A,B, { hash(nb),na,A,kab }pk(B) );
+		send_3 (B,A, { hash(na) }kab );
+
+		claim_B1 (B, Secret, na);
+		claim_B2 (B, Secret, nb);
+	}
+
+}
+
+const Alice,Bob,Eve;
+
+
+

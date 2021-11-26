@@ -1,0 +1,79 @@
+/* 
+ * Needham-Schroeder-Lowe protocol
+ */
+
+// The protocol description
+
+protocol nsl3(I,R)
+{
+	role I
+	{
+		fresh ni: Nonce;
+		var nr: Nonce;
+
+		send_1(I,R, {ni,I}pk(R) );
+		recv_2(R,I, {ni,nr,R}pk(I) );
+		send_3(I,R, {nr}pk(R) );
+
+		claim_i1(I,Secret,ni);
+		claim_i2(I,Secret,nr);
+		claim_i3(I,Niagree);
+		claim_i4(I,Nisynch);
+	}	
+	
+	role R
+	{
+		var ni: Nonce;
+		fresh nr: Nonce;
+
+		recv_1(I,R, {ni,I}pk(R) );
+		send_2(R,I, {ni,nr,R}pk(I) );
+		recv_3(I,R, {nr}pk(R) );
+
+		claim_r1(R,Secret,ni);
+		claim_r2(R,Secret,nr);
+		claim_r3(R,Niagree);
+		claim_r4(R,Nisynch);
+	}
+}
+
+/* 
+ * Needham-Schroeder-Lowe protocol,
+ * broken version (wrong role name in first message)
+ */
+
+// The protocol description
+
+protocol nsl3-broken(I,R)
+{
+	role I
+	{
+		fresh ni: Nonce;
+		var nr: Nonce;
+
+		send_1(I,R, {ni,R}pk(R) );
+		recv_2(R,I, {ni,nr,R}pk(I) );
+		send_3(I,R, {nr}pk(R) );
+
+		claim_i1(I,Secret,ni);
+		claim_i2(I,Secret,nr);
+		claim_i3(I,Niagree);
+		claim_i4(I,Nisynch);
+	}	
+	
+	role R
+	{
+		var ni: Nonce;
+		fresh nr: Nonce;
+
+		recv_1(I,R, {ni,R}pk(R) );
+		send_2(R,I, {ni,nr,R}pk(I) );
+		recv_3(I,R, {nr}pk(R) );
+
+		claim_r1(R,Secret,ni);
+		claim_r2(R,Secret,nr);
+		claim_r3(R,Niagree);
+		claim_r4(R,Nisynch);
+	}
+}
+

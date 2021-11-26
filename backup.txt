@@ -1,0 +1,33 @@
+FROM ubuntu:18.04
+COPY . ./app
+RUN apt-get update && apt-get install -y python-pip
+RUN pip install https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04/wxPython-4.1.0-cp27-cp27mu-linux_x86_64.whl
+RUN apt-get update && apt-get install -y \
+    cmake \
+    build-essential \
+    flex \
+    bison \
+    gcc-multilib \
+    python-minimal \
+    graphviz \ 
+    python-dev \
+    graphviz \ 
+    python-pip \
+    dpkg-dev \
+    libpython2.7-dev \
+    freeglut3-dev \
+    libgl1-mesa-dev \
+    libglu1-mesa-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libgtk-3-dev \
+    libjpeg-dev \
+    libnotify-dev \
+    libpng-dev \
+    libsdl2-dev \
+    libsm-dev \
+    libtiff-dev \
+    libwebkit2gtk-4.0-dev \
+    libxtst-dev \
+    x11vnc \
+    xvfb
+RUN cd /app/src && ./build.sh

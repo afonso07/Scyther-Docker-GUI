@@ -1,0 +1,18 @@
+usertype String;
+
+const Alice,Bob,Charlie: Agent;
+const Hallo: String;
+
+protocol onetrace(I)
+{
+	role I
+	{
+		var input: String;
+
+		recv_!1(I,I, input);
+		send_!2(I,I, Hallo);
+		recv_!3(I,I, input);
+		claim_4(I, Secret, input);
+	}
+}
+

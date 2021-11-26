@@ -1,0 +1,40 @@
+How to compile Scyther
+
+Requirements expressed as Ubuntu packages where [name][location]
+
+Needed:
+	
+  [gcc]
+  	The C compiler.
+  	Note that the current default C compiler on Mac OS X, "clang",
+  	will not work. The reason is that Scyther uses nested function
+  	definitions, which are not supported by clang.
+
+  [flex]
+  [bison]
+  	Two tools for the generation of parsers.
+
+  [build-essential]
+  	This meta-package includes several development tools used by
+  	Scyther.
+
+  [cmake]
+	A Makefile generator, available on almost any platform.
+
+  [gcc-multilib]
+	Some 64-bit platforms need this to enable 32-bit compilation.
+
+
+For cross-compilation (Windows):
+
+  [mingw32][universe]
+  	GCC variant to compile for windows + w32 binutils.
+
+
+The best is to simply execute:
+
+  ./build.sh
+
+This should compile everything for your platform and will copy the
+binaries into the correct location.
+

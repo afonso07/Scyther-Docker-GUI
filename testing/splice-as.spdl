@@ -1,0 +1,59 @@
+usertype TimeStamp, LifeTime;
+
+const pk: Function;
+secret sk: Function;
+inversekeys (pk,sk);
+
+protocol spliceAS(C,AS,S)
+{
+        role C
+	{
+		fresh N1,N2: Nonce;
+		fresh T: TimeStamp;
+		fresh L: LifeTime;
+
+		send_1(C,AS,  C, S, N1 );
+		recv_2(AS,C,  AS, {AS, C, N1, pk(S)}sk(AS) );
+		send_3(C,S,   C, S, {C, T, L, {N2}pk(S)}sk(C) );
+		recv_6(S,C,   S, C, {S, N2}pk(C) );
+
+		claim_7(C, Secret, N2);
+		claim_9(C, Niagree);
+		claim_10(C, Nisynch);
+	}
+
+	role AS
+	{
+		var N1,N3: Nonce;
+
+		recv_1(C,AS,  C, S, N1 );
+		send_2(AS,C,  AS, {AS, C, N1, pk(S)}sk(AS) );
+		recv_4(S,AS,  S, C, N3 );
+		send_5(AS,S,  AS, {AS, S, N3, pk(C)}sk(AS) );
+	}
+
+	role S
+	{
+		fresh N3: Nonce;
+		var N2: Nonce;
+		var T: TimeStamp;
+		var L: LifeTime;
+
+		var ni: Nonce;
+		fresh nr: Nonce;
+
+		recv_3(C,S,   C, S, {C, T, L, {N2}pk(S)}sk(C) );
+		send_4(S,AS,  S, C, N3 );
+		recv_5(AS,S,  AS, {AS, S, N3, pk(C)}sk(AS) );
+		send_6(S,C,   S, C, {S, N2}pk(C) );
+
+		claim_8(S, Secret, N2);
+		claim_11(S, Niagree);
+		claim_12(S, Nisynch);
+	}
+}
+
+
+
+
+

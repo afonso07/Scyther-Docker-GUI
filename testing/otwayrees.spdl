@@ -1,0 +1,58 @@
+secret fresh k : Function;
+
+/* Version from the Spore Librairy
+   http://www.lsv.ens-cachan.fr/spore/otwayRees.html
+*/
+
+usertype String, SesKey, Ticket, Server;
+
+protocol otwayrees(A,B,S)
+{
+	role A
+	{
+		fresh na : Nonce;
+		fresh M : String;
+		var kab : SesKey;
+
+		send_1(A,B, M,A,B, { na,M,A,B }k(A,S) );
+		recv_4(B,A, M, { na,kab }k(A,S) );
+
+		claim_5(A, Secret,kab);
+		claim_5b(A, Niagree);
+		claim_5c(A, Nisynch);
+	}
+
+	role B
+	{
+		var M : String;
+		fresh nb : Nonce;
+		var kab : SesKey;
+		var t1,t2;
+
+		recv_1(A,B, M,A,B, t1 );
+		send_2(B,S, M,A,B, t1, { nb,M,A,B }k(B,S) );
+		recv_3(S,B, M, t2, { nb,kab }k(B,S) );
+		send_4(B,A, M, t2 );
+
+		claim_6(B, Secret,kab);
+		claim_6a(B, Niagree);
+		claim_6b(B, Nisynch);
+	}
+
+	role S
+	{
+		var na,nb : Nonce;
+		var M : String;
+		fresh kab : SesKey;
+		
+		recv_2(B,S, M,A,B, { na,M,A,B }k(A,S), { nb,M,A,B }k(B,S) );
+		send_3(S,B, M, { na,kab }k(A,S) , { nb,kab }k(B,S) );
+	}
+}
+
+const Alice, Bob, Eve: Agent;
+const Simon: Server;
+
+
+
+

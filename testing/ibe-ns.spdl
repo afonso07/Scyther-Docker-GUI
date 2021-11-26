@@ -1,0 +1,61 @@
+// 12/05/06
+// S. Mauw
+// Using Identity Based Encryption primitive to make NSL authentication.
+// The only requirement on the server communications is that the
+// sending of the private key is secret.
+
+const ibepublic: Function; //publicly known key construction from server
+                           //parameters and recipient name
+secret ibesecret: Function;//secret key determined by server for recipient
+const param: Function;     //public security parameter of server
+inversekeys (ibepublic,ibesecret);
+
+protocol ibe(I,R,S)
+{
+	role I
+	{
+                fresh ni: Nonce;
+                var nr: Nonce;
+
+//Note that we are not interested in the order of server messages.
+	        recv_!1(S,I, param(S) );
+                send_3(I,R, {I,ni}ibepublic(param(S),R) );
+                recv_4(R,I, {ni,nr,R}ibepublic(param(S),I) );
+                send_5(I,R, {nr}ibepublic(param(S),R) );
+
+
+                claim_i1(I,Secret,ni);
+                claim_i2(I,Secret,nr);
+                claim_i3(I,Niagree);
+                claim_i4(I,Nisynch);
+	}	
+	
+	role R
+	{
+                var ni: Nonce;
+                fresh nr: Nonce;
+
+	        recv_!2(S,R, {ibesecret(param(S),R)}pk(R) );
+                recv_3(I,R, {I,ni}ibepublic(param(S),R) );
+                send_4(R,I, {ni,nr,R}ibepublic(param(S),I) );
+                recv_5(I,R, {nr}ibepublic(param(S),R) );
+
+                claim_r1(R,Secret,ni);
+                claim_r2(R,Secret,nr);
+                claim_r3(R,Niagree);
+                claim_r4(R,Nisynch);
+	}
+
+	role S
+	{
+		recv_!0(S,S, R,S);			// workaround for the fact that R & S are roles, so Scyther should not jump to conclusions (remove it and see what happens)
+	        send_!1(S,I, param(S) );
+	        send_!2(S,R, {ibesecret(param(S),R)}pk(R) );
+
+                claim_s1(S,Secret,ibesecret(param(S),R));
+	}
+}
+
+compromised ibesecret(param(Eve),Alice);
+compromised ibesecret(param(Eve),Bob);
+compromised ibesecret(param(Eve),Carol);

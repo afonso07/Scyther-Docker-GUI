@@ -1,0 +1,56 @@
+/*
+ * Yahalom Paulson-strengthened
+ * As in Sjouke's list
+ */
+
+usertype Sessionkey, Ticket;
+
+secret k : Function;
+
+const kee: Sessionkey;
+
+protocol yahalompaulson(I,R,S)
+{
+	role I
+	{
+		fresh ni: Nonce;
+		var nr: Nonce;
+		var kir: Sessionkey;
+		var T: Ticket;
+
+		send_1(I,R, I,ni);
+		recv_3(S,I, nr, {R,kir,ni}k(I,S), T );
+		send_4(I,R, T, {nr}kir );
+
+		claim_8(I, Secret,kir);
+		claim_9(I, Nisynch);
+		claim_10(I, Niagree);
+	}
+
+	role R
+	{
+		fresh nr: Nonce;
+		var ni: Nonce;
+		var kir: Sessionkey;
+
+		recv_1(I,R, I,ni);
+		send_2(R,S, R,nr,{I,ni}k(R,S) );
+		recv_4(I,R, {I,R,kir,nr}k(R,S), {nr}kir );
+
+		claim_11(R, Secret,kir);
+		claim_12(R, Nisynch);
+		claim_13(R, Niagree);
+	}
+
+	role S
+	{
+		fresh kir: Sessionkey;
+		var ni,nr: Nonce;
+
+		recv_2(R,S, R,nr, {I,ni}k(R,S) );
+		send_3(S,I, nr, { R,kir,ni }k(I,S), {I,R,kir,nr}k(R,S) );
+	}
+}
+
+
+

@@ -1,0 +1,24 @@
+const pk: Function;
+secret sk: Function;
+inversekeys (pk,sk);
+
+protocol carkeybrokenlim(I,R)
+{
+	role I
+	{
+		fresh ni: Nonce;
+
+		send_1(I,R, I,R );
+	}	
+	
+	role R
+	{
+		var ni: Nonce;
+
+		recv_1(I,R, I,R );
+		claim_2(R,Nisynch);
+	}
+}
+
+
+

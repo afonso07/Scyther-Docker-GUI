@@ -1,0 +1,49 @@
+/* 
+	Bilateral Key Exchange with Public Key protocol (BKEPK)
+	Variation for exercise 2r890
+*/
+
+usertype Key;
+
+const pk,hash: Function;
+secret sk,unhash: Function;
+
+inversekeys (pk,sk);
+inversekeys (hash,unhash);
+
+protocol bkevariation(I,R)
+{
+	role I
+	{
+		fresh ni: Nonce;
+		var nr: Nonce;
+		var kir: Key;
+
+		send_1 (I,R, { ni,I }pk(R) );
+		recv_2 (R,I, { hash(ni),nr,kir }pk(I) );
+		send_3 (I,R, { hash(nr) }kir );
+		claim_4 (I, Secret, kir );
+		claim_5 (I, Niagree );
+		claim_6 (I, Nisynch );
+	}
+
+	role R
+	{
+		var ni: Nonce;
+		fresh nr: Nonce;
+		fresh kir: Key;
+
+		recv_1 (I,R, { ni,I }pk(R) );
+		send_2 (R,I, { hash(ni),nr,kir }pk(I) );
+		recv_3 (I,R, { hash(nr) }kir );
+		claim_7 (R, Secret, kir );
+		claim_8 (R, Niagree );
+		claim_9 (R, Nisynch );
+	}
+}
+
+
+untrusted e;
+compromised sk(e);
+
+

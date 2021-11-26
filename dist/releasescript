@@ -1,0 +1,47 @@
+#!/bin/sh
+
+BUILDER=./build-arch-tag
+
+# Current
+DESCR=`git describe --tags`
+
+# Check whether the tag exists
+TAG=$1
+if [ "x$TAG" != "x" ]
+then
+	FOUND=`git rev-parse $TAG`
+	if [ "$?" -eq 0 ]
+	then
+		echo "Tag $TAG found."
+	else
+		TAG=""
+	fi
+fi
+
+if [ "x$TAG" = "x" ]
+then
+	echo
+	echo "Scyther binary distribution generator."
+	echo
+	echo "  Usage: $0 <tag>"
+	echo
+	echo "Don't know tag $TAG, please select one from below:"
+	git tag -l
+	echo $DESCR
+	exit
+fi
+
+# Determine system and build accordingly
+OS=`uname -s`
+if [ "x$OS" = "xDarwin" ]
+then
+	$BUILDER mac $TAG
+elif [ "x$OS" = "xLinux" ]
+then
+	$BUILDER linux $TAG
+	$BUILDER w32 $TAG
+else
+	echo "Don't know architecture $OS, where am I?"
+	exit
+fi
+

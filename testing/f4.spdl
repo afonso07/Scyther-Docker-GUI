@@ -1,0 +1,38 @@
+/*
+ * f4.spdl
+ *
+ * Tailored protocol to show that any number of runs can be required to
+ * find an attack.
+ *
+ * For this version, -m2 and -r4 are needed.
+ *
+ * April 2005, Cas Cremers
+ */
+
+const pk: Function;
+secret sk: Function;
+inversekeys (pk,sk);
+
+protocol f4(I,R)
+{
+	role I
+	{
+		var nr: Nonce;
+
+		recv_!1(R,I, nr );
+		send_!2(I,R, { nr }sk(I) );
+		recv_!3(R,I, {{{{ nr }sk(R)}sk(R)}sk(R)}sk(R) );
+
+		claim_i1(I,Reachable);
+	}	
+
+	role R
+	{
+		fresh nr: Nonce;
+		send_!1(R,I, nr );
+	}
+	
+}
+
+
+
