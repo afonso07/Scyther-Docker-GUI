@@ -11,5 +11,7 @@ RUN apt-get update && apt-get install -y \
     python-minimal \
     graphviz \ 
     python-dev 
+#Place to save and put scypher files, to be bind mounted
+RUN mkdir -p ./scyther-files 
 RUN cd /app/src && ./build.sh
 CMD cd /app/gui && ./scyther-gui.py

@@ -19,3 +19,5 @@ https://github.com/cascremers/scyther
    
 - Run the bash script with the following command:
 `bash ./scyther-docker.sh`
+
+- A bind mount was created with the folder `scyther-files` so any file placed in that folder is accessible by the docker container live
