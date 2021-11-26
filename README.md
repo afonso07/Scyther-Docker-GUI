@@ -1,76 +1,21 @@
-The Scyther tool repository
+
+Scyther tool with Docker and Quartz
 ===========================
 
-This README describes the organization of the repository of the Scyther
-tool for security protocol analysis. Its intended audience are
-interested users and future developers of the Scyther tool, as well as
-protocol modelers. For installation and usage instructions of the
-Scyther tool see:
-<http://www.cs.ox.ac.uk/people/cas.cremers/scyther/index.html>.
+**This is a useful way to integrate Scyther with Docker and XQuartz.** 
 
-Installing from source
-----------------------
+I take no responsibility for the creation of the Scyther tool, I just share a simple docker-file and bash script that makes the installation and running much easier. 
 
-We use Linux during the development of Scyther, but development on
-Windows and MAC OS X should be equally feasible. Note that the below
-instructions are written from a Linux/Ubuntu perspective, and probably
-need modifications for other platforms.
-
-Scyther is written partly in Python 2 (for the GUI, using wxPython) and
-partly in C (for the backend). 
-
-In order to run the tool from a repository checkout, it is required to
-compile the C sources into a working binary for the backend.  The
-simplest way to achieve this is to run the `build.sh` script in the
-`./src` directory. This script compiles a binary version of the tool on
-the native platform. Thus, in the Linux case, it should produce
-`./src/scyther-linux`. This file is automatically copied to the related
-directory under `./gui`, and if successful you can attempt to run
-`./gui/scyther-gui.py` to use the graphical user interface.
-
-The build process depends on the following
-(Debian/Ubuntu) packages:
-
-  * `cmake`
-  * `build-essential`
-  * `flex`
-  * `bison`
-  * `gcc-multilib`
-  * `python-minimal`
-
-If you are using Ubuntu, installing these may be as simple as running
-
-`sudo apt-get install cmake build-essential flex bison gcc-multilib python-minimal`
-
-In case you also want to be able to compile Windows binaries from Linux,
-you also need:
-
-  * `mingw32`
-
-Note that welcome all contributions, e.g., further protocol models. Just send
-us a pull request.
+Original Scyther repo:
+https://github.com/cascremers/scyther
 
 
-Manual
-------
-
-We are currently rewriting the manual. The current (incomplete) snapshot
-of the manual can be found in the following location:
-
-  * [./gui/scyther-manual.pdf](gui/scyther-manual.pdf)
+## How to Run
 
 
-Protocol Models
----------------
-
-The protocol models have the extension `.spdl` and can be found in the following directories:
-
-  * [./gui/Protocols](gui/Protocols), containing the officially released models, and
-  * [./testing](testing), containing models currently under development.
-
-License
--------
-
-Currently these Scyther sources are licensed under the GPL 2, as indicated in
-the source code. Contact Cas Cremers if you have any questions.
-
+- **Make sure you have XQuartz installed**
+ - Build an image with the following command:
+   `docker build -t scyther:latest .`
+   
+- Run the bash script with the following command:
+`bash ./scyther-docker.sh`
