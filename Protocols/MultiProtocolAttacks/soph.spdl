@@ -1,0 +1,21 @@
+
+protocol soph(I,R)
+{
+	role I
+	{
+		fresh ni: Nonce;
+
+		send_1(I,R, {I,ni}pk(R) );
+		recv_2(R,I, ni );
+		claim_3(I,Niagree);
+	}	
+	
+	role R
+	{
+		var ni: Nonce;
+
+		recv_1(I,R, {I,ni}pk(R) );
+		send_2(R,I, ni );
+	}
+}
+

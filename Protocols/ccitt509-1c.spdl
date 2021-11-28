@@ -1,0 +1,34 @@
+# CCITT X.509 (1c)
+#
+# Modelled after the description in the SPORE library
+# http://www.lsv.ens-cachan.fr/spore/ccittx509_1c.html
+#
+# Note:
+# According to SPORE there are no known attacks on this protocol
+#
+
+hashfunction hash;
+usertype Timestamp;
+
+protocol ccitt509-1c(I,R)
+{
+    role I
+    {
+        fresh Ta: Timestamp;
+        fresh Na,Xa,Ya: Nonce;
+        send_1(I,R, I,{Ta, Na, R, Xa,{Ya,{hash(Ya)}sk(I)}pk(R)}sk(I));
+        # claim_2(I,Nisynch);
+        # This claim is useless as there are no preceding receive events
+    }    
+    
+    role R
+    {
+        var Ta: Timestamp;
+        var Na,Xa,Ya: Nonce;
+
+        recv_1(I,R, I,{Ta, Na, R, Xa,{Ya,{hash(Ya)}sk(I)}pk(R)}sk(I));
+        claim_3(R,Nisynch);
+        # There should also be Fresh Xa and Fresh Ya claims here
+    }
+}
+

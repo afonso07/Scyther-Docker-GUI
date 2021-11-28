@@ -1,0 +1,55 @@
+# Kao Chow Authentication v.2
+#
+# Modelled after the description in the SPORE library
+# http://www.lsv.ens-cachan.fr/spore/kaoChow2.html
+#
+
+usertype SessionKey;
+const Fresh: Function;
+const Compromised: Function;
+
+protocol kaochow-2(I,R,S)
+{
+    role I
+    {
+        fresh ni: Nonce;
+        var nr: Nonce;
+        var kir,kt: SessionKey;
+
+        send_1 (I,S, I,R,ni);
+        recv_3 (R,I, R, {I,R,ni,kir,kt}k(I,S), {ni, kir}kt, nr );
+        send_4 (I,R, {nr,kir}kt );
+
+        claim_I1 (I, Nisynch);
+        claim_I2 (I, Niagree);
+        claim_I3 (I, Secret, kir);
+        claim_I4 (I, Empty, (Fresh,kir));
+    }    
+    
+    role R
+    {
+        var ni: Nonce;
+        fresh nr: Nonce;
+        var kir,kt: SessionKey;
+        var T: Ticket;
+
+        recv_2 (S,R, T, { I,R,ni,kir,kt }k(R,S)  ); 
+        send_3 (R,I, R, T, {ni, kir}kt, nr );
+        recv_4 (I,R, {nr,kir}kt );
+
+        claim_R1 (R, Nisynch);
+        claim_R2 (R, Niagree);
+        claim_R3 (R, Secret, kir);
+        claim_R4 (R, Empty, (Fresh,kir));
+    }
+
+    role S
+    {
+        var ni: Nonce;
+        fresh kir, kt: SessionKey;
+
+        recv_1 (I,S, I,R,ni);
+        send_2 (S,R, {I,R,ni,kir,kt}k(I,S), { I,R,ni,kir,kt }k(R,S)  ); 
+    }
+}
+

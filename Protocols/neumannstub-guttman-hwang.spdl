@@ -1,0 +1,105 @@
+# Neumann Stubblebine
+#
+# Modelled after the description in the SPORE library
+# http://www.lsv.ens-cachan.fr/spore/neumannStubblebine.html
+#
+# Note:
+# In SPORE this protocol is not described correctly, there are in fact 2
+# different protocols (the key establishment protocol and the repeated
+# authentication protocol)
+
+usertype Server, SessionKey, TimeStamp, TicketKey;
+usertype ExpiredTimeStamp;
+
+const Fresh: Function;
+const Compromised: Function;
+
+protocol neustub-GuttmanHwang^Repeat(I,R,S)
+{
+    fresh Kir: SessionKey;
+
+    role I
+    {
+        fresh Mi: Nonce;
+        var Mr: Nonce;
+        fresh Kir: SessionKey;
+        fresh Tr: TimeStamp;
+
+        send_5(I,R,Mi,{I,Kir,Tr}k(R,S));
+        recv_6(R,I,{Mi,Mr}Kir);
+        send_7(I,R,{I,Mr}Kir);
+        claim_I1(I,Secret, Kir);
+        claim_I2(I,Niagree);
+        claim_I3(I,Nisynch);
+        claim_I4(I,Empty,(Fresh,Kir));
+    }
+
+    role R
+    {
+        fresh Mr: Nonce;
+        var Tr: TimeStamp;
+        var Kir: SessionKey;
+        var Mi: Nonce;
+        
+        recv_5(I,R,Mi,{I,Kir,Tr}k(R,S));
+        send_6(R,I,{Mi,Mr}Kir);
+        recv_7(I,R,{I,Mr}Kir);
+        claim_R1(R,Secret, Kir);
+        claim_R2(R,Niagree);
+        claim_R3(R,Nisynch);
+        claim_R4(R,Empty,(Fresh,Kir));
+    }
+
+    role S 
+    {
+    }
+}
+protocol neustub-GuttmanHwang(I,R,S)
+{
+    role I
+    {
+        fresh Ni: Nonce;
+        var Nr: Nonce;
+        var T: Ticket;
+        var Tb: TimeStamp;
+        var Kir: SessionKey;
+        
+        send_1(I,R, I, Ni);
+        recv_!3(S,I, { R,Ni,Kir,Tb}k(I,S), T, Nr);
+        send_!4(I,R,T,{Nr}Kir);
+        
+        claim_I1(I,Secret, Kir);
+        claim_I2(I,Niagree);
+        claim_I3(I,Nisynch);
+        claim_I4(I,Empty,(Fresh,Kir));
+    }
+
+    role R
+    {
+        var Ni,Mi: Nonce;
+        fresh Nr,Mr: Nonce;
+        var Kir: SessionKey;
+        fresh Tb: TimeStamp;
+        var T: Ticket;
+        
+        recv_1(I,R, I, Ni);
+        send_!2(R,S, R, {I, Ni, Tb ,Nr}k(R,S));
+        recv_!4(I,R,{I,Kir,Tb}k(R,S),{Nr}Kir);
+    
+        claim_R1(R,Secret, Kir);
+        claim_R2(R,Niagree);
+        claim_R3(R,Nisynch);
+        claim_R4(R,Empty,(Fresh,Kir));
+    }
+
+    role S
+    {
+        var Ni, Nr: Nonce;
+        fresh Kir: SessionKey;
+        var Tb: TimeStamp;
+
+        recv_!2(R,S, R, {I,Ni,Tb,Nr}k(R,S));
+        send_!3(S,I, { R, Ni, Kir, Tb}k(I,S), { I,Kir,Tb}k(R,S),Nr );
+    }
+}
+

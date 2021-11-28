@@ -1,0 +1,29 @@
+URGENT
+
+-
+
+TO BE DONE
+
+- Config file should use Python's confParse module.
+- Save preferences in local file on close.
+
+WOULD LIKE TO HAVE
+
+- Font selector for graphs.
+- Nice graph scaling for all platforms (now only supported under Linux
+  using the Python Imaging Library through postscript; currently
+  wxPython does not support any cross-platform vector format out of the
+  box, as SVG is still only a non-default build option.)
+- Support for using an external editor.
+  - toggle for 'watch file'.
+    - toggle for 'auto-verify on change' or something like that.
+- Ideally we somehow color the correct/incorrect tags in the editor.
+- Line numbering is needed for the editor window otherwise you cannot
+  interpret attacks. Probably use wx.Py editor things.
+- Scyther executable should be able to be set by means of preferences.
+
+IN AN IDEAL WORLD...
+
+- Use Python modules to generate the attack graphs from the XML, also
+  allow for eg. ASCII output.
+

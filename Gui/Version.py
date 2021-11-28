@@ -1,0 +1,1 @@
+SCYTHER_GUI_VERSION = "v1.1.3"
